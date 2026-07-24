@@ -3,10 +3,10 @@
 
 void setup()
 {
-  init();
+  m2init();
 }
 
 void loop()
 {
-  app();
+  m2app();
 }
