@@ -3,10 +3,6 @@
 
 #include <Arduino.h>
 
-// Initialize Module 1
-void module1Begin(uint8_t ledPin);
-
-// Call repeatedly from loop()
-void module1Blink(void);
+void serialPrintWeight(int mode, int configWeight, int setWeight, int currentWeight, int completeWeight);
 
 #endif // MODULE1_H
