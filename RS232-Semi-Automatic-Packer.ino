@@ -3,16 +3,10 @@
 
 void setup()
 {
-    Serial.begin(115200);
-
-    module1Begin(LED_BUILTIN);
-    module2Begin();
-
-    Serial.println("Project started");
+  m2init();
 }
 
 void loop()
 {
-    module1Blink();
-    module2Update();
+  m2app();
 }
