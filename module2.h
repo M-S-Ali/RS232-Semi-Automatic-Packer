@@ -4,9 +4,9 @@
 #include <Arduino.h>
 
 // Initialize Module 2
-void module2Begin(void);
+void init(void);
 
 // Call repeatedly from loop()
-void module2Update(void);
+void app(void);
 
 #endif // MODULE2_H

@@ -1,11 +1,14 @@
 #include "module2.h"
 
-void module2Begin(void)
+void init(void)
 {
-    // Module 2 initialization code
+    pinMode(13,OUTPUT);
 }
 
-void module2Update(void)
+void app(void)
 {
-    // Module 2 repeated code
+    digitalWrite(13,HIGH);
+    delay(1000);
+    digitalWrite(13,LOW)
+    delay(1000);
 }
