@@ -1,11 +1,11 @@
 #include "module2.h"
 
-void init(void)
+void m2init(void)
 {
     pinMode(13,OUTPUT);
 }
 
-void app(void)
+void m2app(void)
 {
     digitalWrite(13,HIGH);
     delay(1000);
