@@ -14,7 +14,7 @@ void m2app(void)
 }
 
 
-int configWeight(int *set_weight, int *config_weight) {
+int fconfigWeight(int *set_weight, int *config_weight) {
   const int ENC_CLK = 2;
   const int ENC_DT  = 3;
   const int ENC_SW  = 4;
@@ -79,9 +79,9 @@ void emergencyStopISR() {
   emergencyStop = true;
 }
 
-int checkWeightAndMove(int *real_weight, int *set_weight) {
+int fcheckWeightAndMove(int *real_weight, int *set_weight) {
   const int SERVO_PIN        = 9;
-  const int START_BUTTON_PIN = 4;
+  const int START_BUTTON_PIN = 7;
   const int STOP_BUTTON_PIN  = 2;    // must be pin 2 or 3 on Nano (interrupt capable)
   const int INITIAL_ANGLE    = 0;
   const int OPEN_ANGLE       = 90;
@@ -143,7 +143,7 @@ int checkWeightAndMove(int *real_weight, int *set_weight) {
 
 
 
-void checkWeightAndMove(int *real_weight, int *set_weight, int *complete_weight) {
+void fcheckWeight(int *real_weight, int *set_weight, int *complete_weight) {
   const int SERVO_PIN     = 9;
   const int INITIAL_ANGLE = 0;
   const int OPEN_ANGLE    = 120;
