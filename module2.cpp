@@ -139,3 +139,45 @@ int checkWeightAndMove(int *real_weight, int *set_weight) {
 
   return &current_weight;
 }
+
+
+
+
+void checkWeightAndMove(int *real_weight, int *set_weight, int *complete_weight) {
+  const int SERVO_PIN     = 9;
+  const int INITIAL_ANGLE = 0;
+  const int OPEN_ANGLE    = 120;
+  const int RS232_RX      = 10;   // Nano RX  <- scale TX
+  const int RS232_TX      = 11;   // Nano TX  -> scale RX
+  const long RS232_BAUD   = 9600;
+
+  static Servo weightServo;
+  static SoftwareSerial rs232Serial(RS232_RX, RS232_TX);
+  static bool initialized = false;
+  static bool dispensing  = false;
+
+  if (!initialized) {
+    weightServo.attach(SERVO_PIN);
+    weightServo.write(INITIAL_ANGLE);
+    rs232Serial.begin(RS232_BAUD);
+    initialized = true;
+  }
+
+  // first call after a reset -> rotate servo to start dispensing
+  if (!dispensing) {
+    weightServo.write(OPEN_ANGLE);
+    dispensing = true;
+  }
+
+  // take one reading each time this function is called
+  if (rs232Serial.available()) {
+    *real_weight = rs232Serial.parseInt();
+  }
+
+  // check if target reached
+  if (*real_weight == *set_weight) {
+    weightServo.write(INITIAL_ANGLE);
+    *complete_weight = *real_weight;
+    dispensing = false;   // ready for the next cycle
+  }
+}

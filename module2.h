@@ -13,5 +13,6 @@ void m2app(void);
 
 int configWeight(int *set_weight, int *config_weight);
 int checkWeightAndMove(int *real_weight, int *set_weight);
+void checkWeightAndMove(int *real_weight, int *set_weight, int *complete_weight);
 
 #endif // MODULE2_H
