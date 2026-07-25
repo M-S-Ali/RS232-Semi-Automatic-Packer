@@ -2,6 +2,8 @@
 #define MODULE2_H
 
 #include <Arduino.h>
+#include <Servo.h>
+#include <SoftwareSerial.h>
 
 // Initialize Module 2
 void m2init(void);

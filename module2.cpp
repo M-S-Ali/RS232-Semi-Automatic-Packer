@@ -59,3 +59,84 @@ float configWeight(float *set_weight, float *config_weight) {
     isPressed = false;
   }
 }
+
+
+
+#include <Servo.h>
+#include <SoftwareSerial.h>
+
+// ---------------- Globally initialised shared pointers ----------------
+int real_weight_val = 0;
+int set_weight_val  = 500;      // default target, another module can overwrite this
+
+int *real_weight = &real_weight_val;
+int *set_weight  = &set_weight_val;
+
+// ---------------- Emergency stop ----------------
+volatile bool emergencyStop = false;
+
+// Required by attachInterrupt() — must stay a standalone function
+void emergencyStopISR() {
+  emergencyStop = true;
+}
+
+int* checkWeightAndMove(int *real_weight, int *set_weight) {
+  const int SERVO_PIN        = 9;
+  const int START_BUTTON_PIN = 4;
+  const int STOP_BUTTON_PIN  = 2;    // must be pin 2 or 3 on Nano (interrupt capable)
+  const int INITIAL_ANGLE    = 0;
+  const int OPEN_ANGLE       = 90;
+  const int RS232_RX         = 10;   // Nano RX  <- scale TX
+  const int RS232_TX         = 11;   // Nano TX  -> scale RX
+  const long RS232_BAUD      = 9600;
+
+  static Servo weightServo;
+  static SoftwareSerial rs232Serial(RS232_RX, RS232_TX);
+  static bool initialized    = false;
+  static bool dispensing     = false;
+  static int  current_weight = 0;
+
+  // one-time setup, runs only on the very first call
+  if (!initialized) {
+    weightServo.attach(SERVO_PIN);
+    weightServo.write(INITIAL_ANGLE);
+
+    pinMode(START_BUTTON_PIN, INPUT_PULLUP);
+    pinMode(STOP_BUTTON_PIN, INPUT_PULLUP);
+
+    rs232Serial.begin(RS232_BAUD);
+    attachInterrupt(digitalPinToInterrupt(STOP_BUTTON_PIN), emergencyStopISR, FALLING);
+
+    initialized = true;
+  }
+
+  // emergency stop always wins, checked first
+  if (emergencyStop) {
+    weightServo.write(INITIAL_ANGLE);
+    dispensing = false;
+    return &current_weight;
+  }
+
+  // start button pressed -> begin dispensing
+  if (!dispensing && digitalRead(START_BUTTON_PIN) == LOW) {
+    weightServo.write(OPEN_ANGLE);
+    dispensing = true;
+    *real_weight = 0;
+  }
+
+  // while dispensing, keep pulling weight from the RS-232 scale
+  if (dispensing) {
+    if (rs232Serial.available()) {
+      *real_weight = rs232Serial.parseInt();
+    }
+
+    current_weight = *real_weight;   // store live reading
+
+    if (*real_weight >= *set_weight) {
+      weightServo.write(INITIAL_ANGLE);
+      dispensing = false;
+    }
+  }
+
+  return &current_weight;
+}
