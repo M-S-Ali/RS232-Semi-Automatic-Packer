@@ -11,6 +11,7 @@ void m2init(void);
 // Call repeatedly from loop()
 void m2app(void);
 
-float configWeight(float *set_weight, float *config_weight);
+int configWeight(int *set_weight, int *config_weight);
+int checkWeightAndMove(int *real_weight, int *set_weight);
 
 #endif // MODULE2_H
