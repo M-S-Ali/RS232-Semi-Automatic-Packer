@@ -1,28 +1,51 @@
 #include "module1.h"
 
-static uint8_t module1LedPin = LED_BUILTIN;
-static bool ledState = false;
+#include <Arduino.h>
 
-static unsigned long previousBlinkTime = 0;
-static const unsigned long blinkIntervalMs = 500;
+void serialPrintWeight(int mode, int configWeight, int setWeight, int currentWeight, int completeWeight){
+    int selectedWeight = 0;
 
-void module1Begin(uint8_t ledPin)
-{
-    module1LedPin = ledPin;
-
-    pinMode(module1LedPin, OUTPUT);
-    digitalWrite(module1LedPin, LOW);
-}
-
-void module1Blink(void)
-{
-    const unsigned long currentTime = millis();
-
-    if (currentTime - previousBlinkTime >= blinkIntervalMs)
+    switch (mode)
     {
-        previousBlinkTime = currentTime;
-        ledState = !ledState;
+        case 1: // config
+            selectedWeight = configWeight;
+            break;
 
-        digitalWrite(module1LedPin, ledState ? HIGH : LOW);
+        case 2: // ready
+            selectedWeight = setWeight;
+            break;
+
+        case 3: // dispensing
+            selectedWeight = currentWeight;
+            break;
+
+        case 4: // pause
+            selectedWeight = currentWeight;
+            break;
+
+        case 5: // complete
+            selectedWeight = completeWeight;
+            break;
+
+        case 6: // error
+            selectedWeight = 0;
+            break;
+
+        default:
+            selectedWeight = 0;
+            break;
     }
+
+    uint8_t frame[8];
+
+    frame[0] = 0x0D;
+    frame[1] = (uint8_t)(mode);
+    frame[2] = (uint8_t)(selectedWeight >> 8);     // Weight MSB
+    frame[3] = (uint8_t)(selectedWeight & 0xFF);   // Weight LSB
+    frame[4] = 0x00;
+    frame[5] = 0x00;
+    frame[6] = 0x00;
+    frame[7] = 0x0A;
+
+    Serial.write(frame, sizeof(frame));
 }
