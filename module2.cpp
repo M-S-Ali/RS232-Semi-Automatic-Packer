@@ -62,8 +62,7 @@ float configWeight(float *set_weight, float *config_weight) {
 
 
 
-#include <Servo.h>
-#include <SoftwareSerial.h>
+
 
 // ---------------- Globally initialised shared pointers ----------------
 int real_weight_val = 0;
