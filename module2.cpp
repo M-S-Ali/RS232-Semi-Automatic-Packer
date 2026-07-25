@@ -14,12 +14,12 @@ void m2app(void)
 }
 
 
-float configWeight(float *set_weight, float *config_weight) {
-  const int   ENC_CLK = 2;
-  const int   ENC_DT  = 3;
-  const int   ENC_SW  = 4;
-  const int   LONG_PRESS_MS = 1000;
-  const float WEIGHT_STEP   = 0.1;
+int* configWeight(int *set_weight, int *config_weight) {
+  const int ENC_CLK = 2;
+  const int ENC_DT  = 3;
+  const int ENC_SW  = 4;
+  const int LONG_PRESS_MS = 1000;
+  const int WEIGHT_STEP   = 1;   // was 0.1, now smallest int step
 
   static bool initialized = false;
   static int  lastClkState;
